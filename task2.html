@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart‑Home Bluetooth Dashboard</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome for Device Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      integrity="sha512-..."
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: radial-gradient(circle at top right, #d1e3ff 0%, #eef3ff 40%, #ffffff 100%);
+      }
+      /* Glass‑morphism card */
+      .glass {
+        backdrop-filter: blur(10px) saturate(170%);
+        -webkit-backdrop-filter: blur(10px) saturate(170%);
+        background-color: rgba(255, 255, 255, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+      .toggle-checkbox:checked + .toggle-label {
+        background-color: #4f46e5; /* Indigo-600 */
+      }
+      .toggle-checkbox:checked + .toggle-label .toggle-circle {
+        transform: translateX(1.25rem);
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="p-6 flex justify-between items-center">
+      <h1 class="text-2xl md:text-3xl font-semibold text-gray-800">
+        <i class="fa-solid fa-house-signal mr-2 text-indigo-600"></i>Smart‑Home
+        Dashboard
+      </h1>
+      <button
+        id="connectBtn"
+        class="px-5 py-2 rounded-full text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg transition duration-200"
+      >
+        <i class="fa-solid fa-bluetooth-b mr-2"></i>Connect
+      </button>
+    </header>
+
+    <!-- Device Cards -->
+    <main class="flex-1 container mx-auto px-4 md:px-8 pb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <!-- Device Template (duplicate for each device) -->
+      <div class="glass rounded-2xl p-6 shadow-xl flex flex-col items-center" data-characteristic="light">
+        <i class="fa-solid fa-lightbulb text-5xl text-yellow-400 mb-4"></i>
+        <h2 class="text-lg font-medium mb-6">Living‑Room Light</h2>
+        <!-- Toggle -->
+        <div class="relative inline-block w-12 align-middle select-none">
+          <input type="checkbox" name="toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
+          <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200">
+            <span class="toggle-circle absolute left-0 top-0 h-6 w-6 bg-white rounded-full transform transition-transform duration-300"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 shadow-xl flex flex-col items-center" data-characteristic="fan">
+        <i class="fa-solid fa-fan text-5xl text-sky-500 mb-4"></i>
+        <h2 class="text-lg font-medium mb-6">Ceiling Fan</h2>
+        <!-- Toggle -->
+        <div class="relative inline-block w-12 align-middle select-none">
+          <input type="checkbox" name="toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
+          <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200">
+            <span class="toggle-circle absolute left-0 top-0 h-6 w-6 bg-white rounded-full transform transition-transform duration-300"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 shadow-xl flex flex-col items-center" data-characteristic="ac">
+        <i class="fa-solid fa-temperature-three-quarters text-5xl text-red-400 mb-4"></i>
+        <h2 class="text-lg font-medium mb-6">Air‑Conditioner</h2>
+        <!-- Toggle -->
+        <div class="relative inline-block w-12 align-middle select-none">
+          <input type="checkbox" name="toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
+          <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200">
+            <span class="toggle-circle absolute left-0 top-0 h-6 w-6 bg-white rounded-full transform transition-transform duration-300"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 shadow-xl flex flex-col items-center" data-characteristic="lock">
+        <i class="fa-solid fa-lock-keyhole text-5xl text-emerald-500 mb-4"></i>
+        <h2 class="text-lg font-medium mb-6">Front Door Lock</h2>
+        <!-- Toggle -->
+        <div class="relative inline-block w-12 align-middle select-none">
+          <input type="checkbox" name="toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
+          <label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200">
+            <span class="toggle-circle absolute left-0 top-0 h-6 w-6 bg-white rounded-full transform transition-transform duration-300"></span>
+          </label>
+        </div>
+      </div>
+      <!-- Add more devices here as needed -->
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 hidden pointer-events-none">
+      <div class="glass px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3">
+        <i class="fa-solid fa-circle-info text-indigo-600"></i>
+        <span id="toastMsg" class="text-sm font-medium"></span>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+      let bluetoothDevice;
+      let characteristicMap = {};
+
+      const $toast = document.getElementById('toast');
+      const $toastMsg = document.getElementById('toastMsg');
+
+      function showToast(message) {
+        $toastMsg.textContent = message;
+        $toast.classList.remove('hidden');
+        setTimeout(() => $toast.classList.add('hidden'), 3000);
+      }
+
+      async function connect() {
+        try {
+          bluetoothDevice = await navigator.bluetooth.requestDevice({
+            acceptAllDevices: false,
+            filters: [{ namePrefix: 'SmartHome' }],
+            optionalServices: ['0000abcd-0000-1000-8000-00805f9b34fb'] // example UUID
+          });
+
+          const server = await bluetoothDevice.gatt.connect();
+          const service = await server.getPrimaryService('0000abcd-0000-1000-8000-00805f9b34fb');
+
+          // Fetch characteristics for each control; characteristic UUIDs are illustrative
+          characteristicMap.light = await service.getCharacteristic('00001a1a-0000-1000-8000-00805f9b34fb');
+          characteristicMap.fan = await service.getCharacteristic('00002b2b-0000-1000-8000-00805f9b34fb');
+          characteristicMap.ac = await service.getCharacteristic('00003c3c-0000-1000-8000-00805f9b34fb');
+          characteristicMap.lock = await service.getCharacteristic('00004d4d-0000-1000-8000-00805f9b34fb');
+
+          showToast('Connected to ' + bluetoothDevice.name);
+        } catch (error) {
+          console.error(error);
+          showToast('Connection failed. See console for details.');
+        }
+      }
+
+      async function toggleDevice(characteristicKey, on) {
+        const characteristic = characteristicMap[characteristicKey];
+        if (!characteristic) {
+          showToast('Characteristic not available yet. Connect first.');
+          return;
+        }
+        try {
+          const value = new Uint8Array([on ? 1 : 0]);
+          await characteristic.writeValue(value);
+          showToast(`${characteristicKey.charAt(0).toUpperCase() + characteristicKey.slice(1)} ${on ? 'ON' : 'OFF'}`);
+        } catch (error) {
+          console.error(error);
+          showToast('Error: ' + error.message);
+        }
+      }
+
+      // Event Handlers
+      document.getElementById('connectBtn').addEventListener('click', connect);
+
+      document.querySelectorAll('[data-characteristic]').forEach(card => {
+        const key = card.dataset.characteristic;
+        const checkbox = card.querySelector('.toggle-checkbox');
+        checkbox.addEventListener('change', () => toggleDevice(key, checkbox.checked));
+      });
+    </script>
+  </body>
+</html>
